@@ -2,15 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
 
-import Hello from './components/Main';
+import Main from './components/Main';
 
-ReactDOM.render(<Hello />, document.querySelector('#react'));
 
-console.log(
-  Relay.QL`query {
-    podcasts {
-      title,
-      url
-    }
-  }`, 'ok'
+class HomeRoute extends Relay.Route {
+  static routeName = 'Home';
+  static queries = {
+    store: (Component) => Relay.QL`
+      query MainQuery {
+        store { ${Component.getFragment('store')} }
+      }
+    `
+  };
+}
+
+const RelayContainer = (
+  <Relay.RootContainer
+    Component={Main}
+    route={new HomeRoute()}
+  />
 );
+
+ReactDOM.render(RelayContainer, document.querySelector('#react'));
